@@ -48,5 +48,6 @@ relationship ManyToMany {
 
 paginate Address, Customer, Product, Category with pagination
 paginate Product with infinite-scroll
+filter Address, Customer, Product, Category
 
 service Category with serviceClass
