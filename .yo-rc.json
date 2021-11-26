@@ -42,7 +42,9 @@
     "clientTheme": "none",
     "clientThemeVariant": "",
     "reactive": false,
-    "enableGradleEnterprise": false
+    "enableGradleEnterprise": false,
+    "entities": ["Category", "Product", "Customer", "Address"],
+    "lastLiquibaseTimestamp": 1637900381000
   },
   "git-provider": "GitHub",
   "git-company": "dqvn",

@@ -1,0 +1,10 @@
+{
+  "jApp1App": {
+    "CategoryStatus": {
+      "null": "",
+      "AVAILABLE": "AVAILABLE",
+      "RESTRICTED": "RESTRICTED",
+      "DISABLED": "DISABLED"
+    }
+  }
+}
