@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * Spring Data SQL repository for the Category entity.
  */
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSpecificationExecutor<Category> {
     @Query(
         value = "select distinct category from Category category left join fetch category.products",
         countQuery = "select count(distinct category) from Category category"

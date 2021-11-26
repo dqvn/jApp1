@@ -2,7 +2,9 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Category;
 import com.mycompany.myapp.repository.CategoryRepository;
+import com.mycompany.myapp.service.CategoryQueryService;
 import com.mycompany.myapp.service.CategoryService;
+import com.mycompany.myapp.service.criteria.CategoryCriteria;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -43,9 +45,16 @@ public class CategoryResource {
 
     private final CategoryRepository categoryRepository;
 
-    public CategoryResource(CategoryService categoryService, CategoryRepository categoryRepository) {
+    private final CategoryQueryService categoryQueryService;
+
+    public CategoryResource(
+        CategoryService categoryService,
+        CategoryRepository categoryRepository,
+        CategoryQueryService categoryQueryService
+    ) {
         this.categoryService = categoryService;
         this.categoryRepository = categoryRepository;
+        this.categoryQueryService = categoryQueryService;
     }
 
     /**
@@ -142,23 +151,27 @@ public class CategoryResource {
      * {@code GET  /categories} : get all the categories.
      *
      * @param pageable the pagination information.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of categories in body.
      */
     @GetMapping("/categories")
-    public ResponseEntity<List<Category>> getAllCategories(
-        Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
-    ) {
-        log.debug("REST request to get a page of Categories");
-        Page<Category> page;
-        if (eagerload) {
-            page = categoryService.findAllWithEagerRelationships(pageable);
-        } else {
-            page = categoryService.findAll(pageable);
-        }
+    public ResponseEntity<List<Category>> getAllCategories(CategoryCriteria criteria, Pageable pageable) {
+        log.debug("REST request to get Categories by criteria: {}", criteria);
+        Page<Category> page = categoryQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /categories/count} : count all the categories.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/categories/count")
+    public ResponseEntity<Long> countCategories(CategoryCriteria criteria) {
+        log.debug("REST request to count Categories by criteria: {}", criteria);
+        return ResponseEntity.ok().body(categoryQueryService.countByCriteria(criteria));
     }
 
     /**
